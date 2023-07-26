@@ -16,6 +16,7 @@
 * Notifies if vod is older than 60 days (due to Twitch's deletion process)
 
 # Installation
+## Windows
 * Download/install - [Python](https://www.python.org/downloads/)
 * Clone the repository
 * Navigate to the cloned directory
@@ -64,6 +65,27 @@ Please choose an option:
 ### Default Configuration
 ![config_file_vodrecover](https://user-images.githubusercontent.com/118132878/220527660-54a2f47c-20cf-4c2d-b4d1-7c9866835ad4.png)
 
+## Docker
+### Building the image
+Use `--build-arg FFMPEG=1` if you want support for downloading M3U8s/VODs as MP4s
+
+`docker build --build-arg FFMPEG=0 -t vodrecovery https://github.com/Shishkebaboo/VodRecovery.git`
+#### Upgrading the image
+`docker build --pull --no-cache --build-arg FFMPEG=0 -t vodrecovery https://github.com/Shishkebaboo/VodRecovery.git`
+
+### Running the image
+```sh
+docker run --replace -d \
+  --name vodrecovery \
+  -v $PWD/vodrecovery_config.json:/app/config/vodrecovery_config.json \ #optional: mount custom config
+  -v $PWD/vods:/vods \ #mount data directory
+  -p 7681:7681 \
+  --restart always \
+  vodrecovery
+```
+A web shell will be accessible on port 7681 (e.g. [http://127.0.0.1:7681](http://127.0.0.1:7681)) for easy remote access.
+
+Especially useful when combined with a static file server that serves the `$PWD/vods` directory for remote consumption.
 
 # Optional IDEs
 * [PyCharm Community Edition](https://www.jetbrains.com/pycharm/download/) (Recommended)
